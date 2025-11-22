@@ -4,13 +4,21 @@ const keysCheckbox = document.querySelector(".keys-checkbox input");
 const keysDisplay = document.querySelector(".showKeys span");
 
 let allKeys = [];
-let audio = new Audio("tunes/a.wav");
+const audioFiles = {}; // Object to store pre-loaded audio files
+
+// Pre-load all audio files
+pianokeys.forEach((keyEl) => {
+  const key = keyEl.dataset.key;
+  allKeys.push(key);
+  audioFiles[key] = new Audio(`tunes/${key}.wav`); // Create audio object for each key
+});
 
 const playTune = (key) => {
   if (!allKeys.includes(key)) return;
 
-  audio.src = `tunes/${key}.wav`;
-  audio.currentTime = 0;
+  const audio = audioFiles[key]; // Get the pre-loaded audio for this key
+  audio.currentTime = 0; // Reset to start for rapid keypresses
+  audio.volume = volumeSlider.value / 100; // Apply current volume
   audio.play().catch(() => {});
 
   const clickedKey = document.querySelector(
@@ -26,7 +34,6 @@ const playTune = (key) => {
 
 pianokeys.forEach((keyEl) => {
   const key = keyEl.dataset.key;
-  allKeys.push(key);
   keyEl.addEventListener("click", () => playTune(key));
 });
 
@@ -35,7 +42,10 @@ const toggleKeyDisplay = () => {
 };
 
 const handleVolume = (e) => {
-  audio.volume = e.target.value / 100;
+  // Update volume for all pre-loaded audio files
+  Object.values(audioFiles).forEach((audio) => {
+    audio.volume = e.target.value / 100;
+  });
 };
 
 const pressedKey = (e) => {
