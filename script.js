@@ -12,6 +12,8 @@ pianokeys.forEach((keyEl) => {
   audioFiles[key] = new Audio(`tunes/${key}.wav`);
 });
 
+let clearTextTimer;
+
 const playTune = (key) => {
   if (!allKeys.includes(key)) return;
 
@@ -28,7 +30,12 @@ const playTune = (key) => {
     setTimeout(() => clickedKey.classList.remove("active"), 150);
   }
 
+  clearTimeout(clearTextTimer);
   keysDisplay.textContent = key;
+
+  clearTextTimer = setTimeout(() => {
+    keysDisplay.textContent = "";
+  }, 1000);
 };
 
 pianokeys.forEach((keyEl) => {
